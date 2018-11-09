@@ -1,7 +1,7 @@
 # Point-Cloud-Manipulation
 The goal of this project is building an ROS node(point_manipulation_node) which is subscribing to a point topic, doing manipulaitons accordingly
-and republishing it to a new topic.
-The manipulation include angular rotations and linear translations along threee axises.
+and republishing them with a new topic.
+The manipulation includes angular rotations and linear translations along threee axises.
 This node works as a "subscriber" and a "publisher" at the same time. The PCL library has been implemneted. 
 
 ## How To Run The Node:
@@ -21,7 +21,7 @@ In local catkin workspace:
 ```
   $ rosrun point_manipulaiton point_manipulation_exe
 ```
-4. Then we are ready to subscribe the topic"/velodyne_points". We can play a bagfile which is containg this topic to test the node.
+4. Then we are ready to subscribe to the topic"/velodyne_points". We can play a bagfile which is containg this topic to test the node.
 ```
   $ rosbag play test.bag
 ```
@@ -34,9 +34,9 @@ and publish the new cloud point with the new topic "output_topic".
 
 2. The node uses the pcl::fromROSMsg function to convert ROS message sensor_msgs/PointCloud2 to cloud point pcl::PointCloud<pcl::PointXYZ>.  
 
-3. Defines a rotation matrix (see https://en.wikipedia.org/wiki/Rotation_matrix). Matrix parameters can be set up as part of function inputs(ToDo). 
+3. Defines a rotation matrix (see https://en.wikipedia.org/wiki/Rotation_matrix). Matrix parameters can be set up as part of function inputs. 
     
-4. The node implements the pcl::transformPointCloud function to execute the linear tranlating and augular rotating transformation.
+4. The node implements the pcl::transformPointCloud function to execute the linear translating and augular rotating transformation.
 
 5. The node uses the pcl::toROSMsg function to convet cloud point pcl::PointCloud<pcl::PointXYZ> to ROS message sensor_msgs/PointCloud2.
 
