@@ -1,0 +1,8 @@
+prefix=/home/jinpeng/Point-Cloud-Manipulation/point_cloud_ws/devel
+
+Name: point_manipulation
+Description: Description of point_manipulation
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/jinpeng/Point-Cloud-Manipulation/point_cloud_ws/devel/lib 
+Requires: 

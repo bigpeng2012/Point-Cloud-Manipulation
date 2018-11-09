@@ -1,0 +1,2 @@
+point_manipulation
+-DCATKIN_DEVEL_PREFIX=/home/jinpeng/Point-Cloud-Manipulation/point_cloud_ws/devel -DCMAKE_INSTALL_PREFIX=/home/jinpeng/Point-Cloud-Manipulation/point_cloud_ws/install -G Unix Makefiles
