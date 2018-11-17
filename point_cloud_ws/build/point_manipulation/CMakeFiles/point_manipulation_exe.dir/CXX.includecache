@@ -43,6 +43,8 @@ pcl/common/transforms.h
 -
 subscribe_publish.h
 -
+ros/console.h
+-
 
 /opt/ros/kinetic/include/pcl_conversions/pcl_conversions.h
 vector

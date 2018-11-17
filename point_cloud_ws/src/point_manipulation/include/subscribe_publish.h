@@ -17,11 +17,12 @@ public:
   //! Destructor.
   //~PublisherSubscriber();
 
-  PublisherSubscriber(std::string subscribeTopicName, std::string publishTopicName, int queueSize)
+  PublisherSubscriber(std::string subscribeTopicName, std::string publishTopicName, int queueSize, int div, int movex)
   {
     publisherObject = nH.advertise<PublishT>(publishTopicName, queueSize);
     subscriberObject = nH.subscribe<SubscribeT>(subscribeTopicName, queueSize, &PublisherSubscriber::subscriberCallback,this);
-
+    in_div = div;
+    in_move_x = movex;
 
   }
   // Callback function
@@ -35,6 +36,9 @@ protected:
   ros::Subscriber subscriberObject;
   ros::Publisher publisherObject;
   ros::NodeHandle nH;
+
+  int in_div;
+  int in_move_x;
 
 
 };
