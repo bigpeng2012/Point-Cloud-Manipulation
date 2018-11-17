@@ -21,9 +21,7 @@
 
 
 template<>
- // PublisherSubscriber<sensor_msgs::PointCloud2, sensor_msgs::PointCloud2> PubSub ("/velodyne_points", "output_topic",1, 4);
-void PublisherSubscriber<sensor_msgs::PointCloud2,
-sensor_msgs::PointCloud2> ::subscriberCallback(const sensor_msgs::PointCloud2::ConstPtr& input)
+void PublisherSubscriber<sensor_msgs::PointCloud2,sensor_msgs::PointCloud2> ::subscriberCallback(const sensor_msgs::PointCloud2::ConstPtr& input)
 {
 
   ROS_DEBUG("Point Cloud Received");
@@ -50,6 +48,10 @@ sensor_msgs::PointCloud2> ::subscriberCallback(const sensor_msgs::PointCloud2::C
                 << " "    << cloud_source.points[i].y
                 << " "    << cloud_source.points[i].z << std::endl;
 
+  float theta_x = M_PI*rotate_over_x;
+  float theta_y = M_PI*rotate_over_y;
+  float theta_z = M_PI*rotate_over_z;
+
  /* Reminder: how transformation matrices work :
 
            |-------> This column is the translation
@@ -58,72 +60,97 @@ sensor_msgs::PointCloud2> ::subscriberCallback(const sensor_msgs::PointCloud2::C
     | 0 0 1 z |  /
     | 0 0 0 1 |    -> We do not use this line (and it has to stay 0,0,0,1)
 
+
     METHOD #1: Using a Matrix4f
     This is the "manual" method, perfect to understand but error prone !
   */
 
+
   Eigen::Matrix4f transform_1 = Eigen::Matrix4f::Identity();
 
   // Define a rotation matrix (see https://en.wikipedia.org/wiki/Rotation_matrix)
-
-  //float theta = M_PI/4; // The angle of rotation in radians
-  float theta = M_PI/in_div;
-
-  transform_1 (0,0) = cos (theta);
-  transform_1 (0,1) = -sin(theta);
-  transform_1 (1,0) = sin (theta);
-  transform_1 (1,1) = cos (theta);
+  // rotation around z axis
+  transform_1 (0,0) = cos (theta_z);
+  transform_1 (0,1) = -sin(theta_z);
+  transform_1 (1,0) = sin (theta_z);
+  transform_1 (1,1) = cos (theta_z);
   //    (row, column)
 
   // Define a translation of 2.5 meters on the x axis.
-  transform_1 (0,3) = in_move_x;
+  transform_1 (0,3) = trans_x;
 
-  // Print the transformation
- // printf ("Method #1: using a Matrix4f\n");
- // std::cout << transform_1 << std::endl;
+
+  /*  METHOD #2: Using a Affine3f
+     This method is easier and less error prone
+   */
+   Eigen::Affine3f transform_2 = Eigen::Affine3f::Identity();
+
+   // Define a translation of 2.5 meters on the x axis.
+   transform_2.translation() << trans_x, trans_y, trans_z;
+
+   // The same rotation matrix as before; theta radians around x y z axis
+   transform_2.rotate (Eigen::AngleAxisf (theta_x, Eigen::Vector3f::UnitX()));
+   transform_2.rotate (Eigen::AngleAxisf (theta_y, Eigen::Vector3f::UnitY()));
+   transform_2.rotate (Eigen::AngleAxisf (theta_z, Eigen::Vector3f::UnitZ()));
+
+
+   // Print the transformation
+   //printf ("\nMethod #2: using an Affine3f\n");
+   //std::cout << transform_2.matrix() << std::endl;
 
    // Executing the transformation
   pcl::PointCloud<pcl::PointXYZ> cloud_transformed;
-  pcl::transformPointCloud (cloud_source, cloud_transformed, transform_1);
+  pcl::transformPointCloud (cloud_source, cloud_transformed, transform_2);
 
 
   // Convert to ROS message data type
   sensor_msgs::PointCloud2 output;
   pcl::toROSMsg(cloud_transformed, output);
 
-  // print out
-  /*
-  printf ("Cloud: width = %d, height = %d\n", output.width, output.height);
-    BOOST_FOREACH (unsigned char pt2, output.data)
-    {
-      printf ("\t(%d)", pt2);
-    }
-    printf("\n");
-    */
 
-  // Publish the model coefficients
+  // Publish the new message
   publisherObject.publish (output);
 }
 
-//ros::Publisher pub;
 
 
 int main (int argc, char** argv)
 {
 
   // Initialize ROS
-  int input_pi_div;
-  input_pi_div = 4;
+  ros::init (argc, argv, "point_manipulaiton_node");
+
+  // rotation over x axis, pi*rotate_x
+  double rotate_x;
+  rotate_x = 0.25;
+
+  // rotation over y axis, pi*rotate_y
+  double rotate_y;
+  rotate_y = 0;
+
+  // rotation over z axis, pi*rotate_z
+  double rotate_z;
+  rotate_z = 0;
+
 
   int input_queue_size;
   input_queue_size = 1;
 
-  int input_trans_x;
-  input_trans_x = 2.5;
+  // translation along x axis
+  double move_x;
+  move_x = 2.5;
 
-  ros::init (argc, argv, "point_manipulaiton_node");
+  // translation along y axis
+  double move_y;
+  move_y = 0;
+
+  // translation along z axis
+  double move_z;
+  move_z = 0;
+
+
   PublisherSubscriber<sensor_msgs::PointCloud2, sensor_msgs::PointCloud2>
-      PubSub ("/velodyne_points", "output_topic",input_queue_size, input_pi_div, input_trans_x);
+      PubSub ("/velodyne_points", "output_topic",input_queue_size, rotate_x, rotate_y, rotate_z, move_x, move_y, move_z);
 
 
 
