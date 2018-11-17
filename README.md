@@ -34,8 +34,19 @@ and publish the new cloud point with the new topic "output_topic".
 
 2. The node uses the pcl::fromROSMsg function to convert ROS message sensor_msgs/PointCloud2 to cloud point pcl::PointCloud<pcl::PointXYZ>.  
 
-3. Defines a rotation matrix (see https://en.wikipedia.org/wiki/Rotation_matrix). Matrix parameters can be set up as part of function inputs. 
-    
+3. The angular rotations and linear translation can be achieved by defining a rotation matrix (see https://en.wikipedia.org/wiki/Rotation_matrix) 
+```
+  Eigen::Matrix4f transform_1
+```
+  or use the Affine3f library
+```
+  Eigen::Affine3f transform_2
+```
+  Here I use six different paramters to represent the rotation around x ,y ,z axis and linear translation on x, y , z direction: 
+  rotate_x, rotate_y, rotate_z, move_x, move_y, move_z
+  
+  rotate around x axis: pi * rotate_x
+  
 4. The node implements the pcl::transformPointCloud function to execute the linear translating and augular rotating transformation.
 
 5. The node uses the pcl::toROSMsg function to convet cloud point pcl::PointCloud<pcl::PointXYZ> to ROS message sensor_msgs/PointCloud2.
