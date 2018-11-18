@@ -20,6 +20,8 @@
 
 
 
+
+
 template<>
 void PublisherSubscriber<sensor_msgs::PointCloud2,sensor_msgs::PointCloud2> ::subscriberCallback(const sensor_msgs::PointCloud2::ConstPtr& input)
 {
@@ -117,6 +119,10 @@ void PublisherSubscriber<sensor_msgs::PointCloud2,sensor_msgs::PointCloud2> ::su
 int main (int argc, char** argv)
 {
 
+  if( ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug) ) {
+     ros::console::notifyLoggerLevelsChanged();
+  }
+
   // Initialize ROS
   ros::init (argc, argv, "point_manipulaiton_node");
 
@@ -149,8 +155,11 @@ int main (int argc, char** argv)
   move_z = 0;
 
 
+  //PublisherSubscriber<sensor_msgs::PointCloud2, sensor_msgs::PointCloud2>
+  //    PubSub ("/velodyne_points", "output_topic",input_queue_size, rotate_x, rotate_y, rotate_z, move_x, move_y, move_z);
+
   PublisherSubscriber<sensor_msgs::PointCloud2, sensor_msgs::PointCloud2>
-      PubSub ("/velodyne_points", "output_topic",input_queue_size, rotate_x, rotate_y, rotate_z, move_x, move_y, move_z);
+      PubSub ("chatter_front", "output_topic",input_queue_size, rotate_x, rotate_y, rotate_z, move_x, move_y, move_z);
 
 
 

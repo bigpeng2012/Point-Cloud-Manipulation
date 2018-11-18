@@ -1,0 +1,1 @@
+/usr/bin/c++        CMakeFiles/talker.dir/src/talker.cpp.o  -o /home/jinpeng/Point-Cloud-Manipulation/point_cloud_ws/devel/lib/point_manipulation/talker -rdynamic 

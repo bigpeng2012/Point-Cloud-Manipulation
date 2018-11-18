@@ -208,3 +208,5 @@ add_executable(point_manipulation_exe src/subscribe_publish_node.cpp)
 #target_link_libraries(example ${catkin_LIBRARIES})
 
 target_link_libraries(point_manipulation_exe ${PCL_LIBRARIES} ${catkin_LIBRARIES})
+
+
